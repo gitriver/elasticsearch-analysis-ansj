@@ -1,11 +1,10 @@
 package org.ansj.lucene5;
 
-import java.io.Reader;
 import java.util.Set;
+
 import org.ansj.lucene.util.AnsjTokenizer;
 import org.ansj.splitWord.analysis.ToAnalysis;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
 import org.apache.lucene.analysis.Tokenizer;
 import org.nlpcn.commons.lang.tire.domain.Forest;
 

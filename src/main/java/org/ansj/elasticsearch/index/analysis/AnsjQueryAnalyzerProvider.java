@@ -12,36 +12,34 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.Index;
 import org.elasticsearch.index.analysis.AbstractIndexAnalyzerProvider;
-import org.elasticsearch.index.settings.IndexDynamicSettings;
+import org.elasticsearch.index.settings.IndexSettingsService;
 
 public class AnsjQueryAnalyzerProvider extends AbstractIndexAnalyzerProvider<Analyzer> {
-    private final Analyzer analyzer;
+	private final Analyzer analyzer;
 
-    @Inject
-    public AnsjQueryAnalyzerProvider(Index index, @IndexDynamicSettings Settings indexSettings,
-                                     Environment env, @Assisted String name,
-                                     @Assisted Settings settings) {
-        super(index, indexSettings, name, settings);
-        init(indexSettings, settings);
-        analyzer = new AnsjAnalysis(filter, pstemming);
-    }
+	@Inject
+	public AnsjQueryAnalyzerProvider(Index index, IndexSettingsService indexSettings, Environment env,
+			@Assisted String name, @Assisted Settings settings) {
+		super(index, indexSettings.getSettings(), name, settings);
+		init(indexSettings.getSettings(), settings);
+		analyzer = new AnsjAnalysis(filter, pstemming);
+	}
 
-    public AnsjQueryAnalyzerProvider(Index index, Settings indexSettings, String name,
-                                     Settings settings) {
-        super(index, indexSettings, name, settings);
-        init(indexSettings, settings);
-        analyzer = new AnsjAnalysis(filter, pstemming);
-    }
+	public AnsjQueryAnalyzerProvider(Index index, Settings indexSettings, String name, Settings settings) {
+		super(index, indexSettings, name, settings);
+		init(indexSettings, settings);
+		analyzer = new AnsjAnalysis(filter, pstemming);
+	}
 
-    public AnsjQueryAnalyzerProvider(Index index, Settings indexSettings, String prefixSettings,
-                                     String name, Settings settings) {
-        super(index, indexSettings, name, settings);
-        init(indexSettings, settings);
-        analyzer = new AnsjAnalysis(filter, pstemming);
-    }
+	public AnsjQueryAnalyzerProvider(Index index, Settings indexSettings, String prefixSettings, String name,
+			Settings settings) {
+		super(index, indexSettings, name, settings);
+		init(indexSettings, settings);
+		analyzer = new AnsjAnalysis(filter, pstemming);
+	}
 
-    @Override
-    public Analyzer get() {
-        return this.analyzer;
-    }
+	@Override
+	public Analyzer get() {
+		return this.analyzer;
+	}
 }

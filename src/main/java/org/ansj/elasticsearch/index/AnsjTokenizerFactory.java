@@ -1,8 +1,5 @@
 package org.ansj.elasticsearch.index;
 
-import java.io.BufferedReader;
-import java.io.Reader;
-
 import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.filter;
 import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.init;
 import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.pstemming;
@@ -15,14 +12,14 @@ import org.elasticsearch.common.inject.assistedinject.Assisted;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.Index;
 import org.elasticsearch.index.analysis.AbstractTokenizerFactory;
-import org.elasticsearch.index.settings.IndexDynamicSettings;
+import org.elasticsearch.index.settings.IndexSettingsService;
 
 public class AnsjTokenizerFactory extends AbstractTokenizerFactory {
 
 	@Inject
-	 public AnsjTokenizerFactory(Index index,@IndexDynamicSettings Settings indexSettings,@Assisted String name, @Assisted Settings settings) {
-		super(index, indexSettings, name, settings);
-		init(indexSettings, settings);
+	 public AnsjTokenizerFactory(Index index, IndexSettingsService indexSettings,@Assisted String name, @Assisted Settings settings) {
+		super(index, indexSettings.getSettings(), name, settings);
+		init(indexSettings.getSettings(), settings);
 	}
 
 //	@Override

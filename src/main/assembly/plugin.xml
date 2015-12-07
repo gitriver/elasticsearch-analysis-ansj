@@ -11,8 +11,15 @@
         <fileSet>  
             <directory>${project.basedir}/src/main/dic</directory>  
             <outputDirectory>/dic</outputDirectory>  
-        </fileSet>  
+        </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>${project.basedir}/src/main/resources/plugin-descriptor.properties</source>
+            <outputDirectory></outputDirectory>
+            <filtered>true</filtered>
+        </file>
+    </files>
     <dependencySets>
         <dependencySet>
             <useProjectArtifact>true</useProjectArtifact>
@@ -20,6 +27,18 @@
                 <exclude>org.elasticsearch:elasticsearch</exclude>
                 <exclude>org.apache.lucene:lucene*</exclude>
                 <exclude>com.spatial4j:spatial4j</exclude>
+                <exclude>commons*</exclude>
+                <exclude>org.yaml:snakeyaml</exclude>
+                <exclude>com.twitter:jsr166e</exclude>
+                <exclude>com.ning:compress-lzf</exclude>
+                <exclude>>commons-pool:commons-pool</exclude>
+                <exclude>*jackson*</exclude>
+                <exclude>*joda*</exclude>
+                <exclude>*tdunning*</exclude>
+                <exclude>*netty*</exclude>
+                <exclude>*guava*</exclude>
+                <exclude>*hdrhistogram*</exclude>
+                <exclude>*carrotsearch*</exclude>
             </excludes>
             <scope>compile</scope>
         </dependencySet>        
