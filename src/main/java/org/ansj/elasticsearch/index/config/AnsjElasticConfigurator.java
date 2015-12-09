@@ -17,8 +17,8 @@ import org.elasticsearch.common.logging.ESLogger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
-
 import org.nlpcn.commons.lang.util.IOUtil;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -28,14 +28,10 @@ public class AnsjElasticConfigurator {
 	public static Set<String> filter;
 	public static boolean pstemming = false;
 	public static Environment environment;
-	public static String DEFAULT_USER_LIB_PATH = "ansj/dic/user/";
-	public static String DEFAULT_AMB_FILE_LIB_PATH = "ansj/dic/ambiguity.dic";
+	public static String ANSJ_CONFIG_PATH = "ansj/library.properties";
 	public static String DEFAULT_STOP_FILE_LIB_PATH = "ansj/dic/stopLibrary.dic";
-	public static boolean DEFAULT_IS_NAME_RECOGNITION = true;
-	public static boolean DEFAULT_IS_NUM_RECOGNITION = true;
-	public static boolean DEFAUT_IS_QUANTIFIE_RRECOGNITION = true;
 
-	public static void init(Settings indexSettings, Settings settings) {
+	public static void init(Settings indexSettings, Settings settings) throws IOException {
 		if (isLoaded()) {
 			return;
 		}
@@ -96,26 +92,15 @@ public class AnsjElasticConfigurator {
 		ToAnalysis.parse("一个词");
 	}
 
-	private static void initConfigPath(Settings settings) {
+	private static void initConfigPath(Settings settings) throws IOException {
 		// 是否提取词干
 		pstemming = settings.getAsBoolean("pstemming", false);
-		// 用户自定义辞典
-		logger.info("environment.pluginsFile:{}", environment.pluginsFile().toFile().getAbsolutePath());
-		logger.info("user_path:{}", settings.get("user_path", DEFAULT_USER_LIB_PATH));
-		File path = new File(environment.pluginsFile().toFile(), settings.get("user_path", DEFAULT_USER_LIB_PATH));
-		MyStaticValue.userLibrary = path.getAbsolutePath();
-		logger.debug("用户词典路径:{}", MyStaticValue.userLibrary);
-		// 用户自定义辞典
-		path = new File(environment.pluginsFile().toFile(), settings.get("ambiguity", DEFAULT_AMB_FILE_LIB_PATH));
-		MyStaticValue.ambiguityLibrary = path.getAbsolutePath();
-		logger.debug("歧义词典路径:{}", MyStaticValue.ambiguityLibrary);
-
-		MyStaticValue.isNameRecognition = settings.getAsBoolean("is_name", DEFAULT_IS_NAME_RECOGNITION);
-
-		MyStaticValue.isNumRecognition = settings.getAsBoolean("is_num", DEFAULT_IS_NUM_RECOGNITION);
-
-		MyStaticValue.isQuantifierRecognition = settings.getAsBoolean("is_quantifier",
-				DEFAUT_IS_QUANTIFIE_RRECOGNITION);
+		// ansj配置文件相对于es plugin目录的相对路径
+		String ansj_config_path = settings.get("ansj_config", ANSJ_CONFIG_PATH);
+		// es plugin目录路径
+		String pluginPath = environment.pluginsFile().toFile().getAbsolutePath();
+		// 初始化MyStaticValue
+		MyStaticValue.init(pluginPath, ansj_config_path);
 
 	}
 
