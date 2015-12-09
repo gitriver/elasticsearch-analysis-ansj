@@ -4,6 +4,8 @@ import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.filter
 import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.init;
 import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.pstemming;
 
+import java.io.IOException;
+
 import org.ansj.lucene.util.AnsjTokenizer;
 import org.ansj.splitWord.analysis.IndexAnalysis;
 import org.apache.lucene.analysis.Tokenizer;
@@ -19,22 +21,24 @@ import org.elasticsearch.index.settings.IndexSettingsService;
  */
 public class AnsjIndexTokenizerFactory extends AbstractTokenizerFactory {
 
-    @Inject
-	public AnsjIndexTokenizerFactory(Index index, IndexSettingsService indexSettings,@Assisted String name, @Assisted Settings settings) {
-        super(index, indexSettings.getSettings(), name, settings);
-        init(indexSettings.getSettings(), settings);
-    }
+	@Inject
+	public AnsjIndexTokenizerFactory(Index index, IndexSettingsService indexSettings, @Assisted String name,
+			@Assisted Settings settings) throws IOException {
+		super(index, indexSettings.getSettings(), name, settings);
+		init(indexSettings.getSettings(), settings);
+	}
 
-    @Override
-    public Tokenizer create() {
-        // TODO Auto-generated method stub
-        return new AnsjTokenizer(new IndexAnalysis(), filter, pstemming);
-        //return new AnsjTokenizer(new IndexAnalysis(), filter, pstemming);
-    }
+	@Override
+	public Tokenizer create() {
+		// TODO Auto-generated method stub
+		return new AnsjTokenizer(new IndexAnalysis(), filter, pstemming);
+		// return new AnsjTokenizer(new IndexAnalysis(), filter, pstemming);
+	}
 
-//    @Override
-//    public Tokenizer create(Reader reader) {
-//        return new AnsjTokenizer(new IndexAnalysis(new BufferedReader(reader)), reader, filter, pstemming);
-//    }
+	// @Override
+	// public Tokenizer create(Reader reader) {
+	// return new AnsjTokenizer(new IndexAnalysis(new BufferedReader(reader)),
+	// reader, filter, pstemming);
+	// }
 
 }

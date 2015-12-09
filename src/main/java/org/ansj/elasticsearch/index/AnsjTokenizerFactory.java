@@ -4,6 +4,8 @@ import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.filter
 import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.init;
 import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.pstemming;
 
+import java.io.IOException;
+
 import org.ansj.lucene.util.AnsjTokenizer;
 import org.ansj.splitWord.analysis.IndexAnalysis;
 import org.apache.lucene.analysis.Tokenizer;
@@ -17,7 +19,7 @@ import org.elasticsearch.index.settings.IndexSettingsService;
 public class AnsjTokenizerFactory extends AbstractTokenizerFactory {
 
 	@Inject
-	 public AnsjTokenizerFactory(Index index, IndexSettingsService indexSettings,@Assisted String name, @Assisted Settings settings) {
+	 public AnsjTokenizerFactory(Index index, IndexSettingsService indexSettings,@Assisted String name, @Assisted Settings settings) throws IOException {
 		super(index, indexSettings.getSettings(), name, settings);
 		init(indexSettings.getSettings(), settings);
 	}
