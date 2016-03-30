@@ -2,10 +2,13 @@ package org.ansj.elasticsearch.index.config;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import org.ansj.elasticsearch.pubsub.redis.AddTermRedisPubSub;
@@ -29,7 +32,9 @@ public class AnsjElasticConfigurator {
 	public static boolean pstemming = false;
 	public static Environment environment;
 	public static String ANSJ_CONFIG_PATH = "ansj/library.properties";
-	public static String DEFAULT_STOP_FILE_LIB_PATH = "ansj/dic/stopLibrary.dic";
+	public static String DEFAULT_STOP_FILE_LIB_PATH = "ansj/dic/stopwords_all.txt";
+
+	public static Properties prop = new Properties();
 
 	public static void init(Settings indexSettings, Settings settings) throws IOException {
 		if (isLoaded()) {
@@ -37,8 +42,8 @@ public class AnsjElasticConfigurator {
 		}
 		environment = new Environment(indexSettings);
 		initConfigPath(settings);
-		logger.info("enabled_stop_filter: {}", settings.get("enabled_stop_filter"));
-		boolean enabledStopFilter = settings.getAsBoolean("enabled_stop_filter", false);
+		logger.info("enabled_stop_filter: {}", environment.settings().get("enabled_stop_filter"));
+		boolean enabledStopFilter = settings.getAsBoolean("enabled_stop_filter", true);
 
 		if (enabledStopFilter) {
 			loadFilter(settings);
@@ -77,7 +82,6 @@ public class AnsjElasticConfigurator {
 						.setIpAddress(ipAndport).setPort(port).jedisPool();
 				RedisUtils.setJedisPool(pool);
 				final Jedis jedis = RedisUtils.getConnection();
-
 				logger.debug("pool:" + (pool == null) + ",jedis:" + (jedis == null));
 				logger.info("redis守护线程准备完毕,ip:{},port:{},channel:{}", ipAndport, port, channel);
 				jedis.subscribe(new AddTermRedisPubSub(), new String[] { channel });
@@ -96,24 +100,25 @@ public class AnsjElasticConfigurator {
 		// 是否提取词干
 		pstemming = settings.getAsBoolean("pstemming", false);
 		// ansj配置文件相对于es plugin目录的相对路径
-		String ansj_config_path = settings.get("ansj_config", ANSJ_CONFIG_PATH);
+		String ansj_config_path = environment.settings().get("ansj_config", ANSJ_CONFIG_PATH);
 		// es plugin目录路径
-		String pluginPath = environment.pluginsFile().toFile().getAbsolutePath();
+		String pluginPath = environment.pluginsFile().getAbsolutePath();
 		// 初始化MyStaticValue
-		MyStaticValue.init(pluginPath, ansj_config_path);
-
+		logger.info("pluginPath:" + pluginPath);
+		logger.info("ansjConfigPath:" + ansj_config_path);
+		InputStream inputStream = new FileInputStream(new File(pluginPath, ansj_config_path));
+		prop.load(inputStream);
+		MyStaticValue.init(pluginPath, prop);
 	}
 
 	private static void loadFilter(Settings settings) {
 		Set<String> filters = new HashSet<String>();
-		String stopLibraryPath = settings.get("stop_path", DEFAULT_STOP_FILE_LIB_PATH);
-
+		String stopLibraryPath = prop.getProperty("stopwordLibrary");
 		if (stopLibraryPath == null) {
 			return;
 		}
-
-		File stopLibrary = new File(environment.configFile().toFile(), stopLibraryPath);
-		logger.debug("停止词典路径:{}", stopLibrary.getAbsolutePath());
+		File stopLibrary = new File(environment.pluginsFile().getAbsolutePath(), stopLibraryPath);
+		logger.info("停止词典路径:{}", stopLibrary.getAbsolutePath());
 		if (!stopLibrary.isFile()) {
 			logger.info("Can't find the file:" + stopLibraryPath + ", no such file or directory exists!");
 			emptyFilter();
@@ -122,11 +127,13 @@ public class AnsjElasticConfigurator {
 		}
 
 		BufferedReader br;
+		int count = 0;
 		try {
 			br = IOUtil.getReader(stopLibrary.getAbsolutePath(), "UTF-8");
 			String temp = null;
 			while ((temp = br.readLine()) != null) {
 				filters.add(temp);
+				count++;
 			}
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -136,7 +143,7 @@ public class AnsjElasticConfigurator {
 			e.printStackTrace();
 		}
 		filter = filters;
-		logger.info("ansj停止词典加载完毕!");
+		logger.info("ansj停止词典加载完毕!停用词词数: {}" ,count);
 	}
 
 	private static void emptyFilter() {

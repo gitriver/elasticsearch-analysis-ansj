@@ -6,7 +6,7 @@ import static org.ansj.elasticsearch.index.config.AnsjElasticConfigurator.pstemm
 
 import java.io.IOException;
 
-import org.ansj.lucene5.AnsjAnalysis;
+import org.ansj.lucene4.AnsjAnalysis;
 import org.apache.lucene.analysis.Analyzer;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.inject.assistedinject.Assisted;
