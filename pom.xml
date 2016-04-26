@@ -4,7 +4,7 @@
 
 	<groupId>org.ansj</groupId>
 	<artifactId>elasticsearch-analysis-ansj</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0-ENCRYPT</version>
 	<name>elasticsearch-analysis-ansj</name>
 
 	<properties>
