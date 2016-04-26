@@ -14,6 +14,7 @@ import java.util.Set;
 import org.ansj.elasticsearch.pubsub.redis.AddTermRedisPubSub;
 import org.ansj.elasticsearch.pubsub.redis.RedisPoolBuilder;
 import org.ansj.elasticsearch.pubsub.redis.RedisUtils;
+import org.ansj.lucene.util.FileDeEncrypt;
 import org.ansj.splitWord.analysis.ToAnalysis;
 import org.ansj.util.MyStaticValue;
 import org.elasticsearch.common.logging.ESLogger;
@@ -129,7 +130,9 @@ public class AnsjElasticConfigurator {
 		BufferedReader br;
 		int count = 0;
 		try {
-			br = IOUtil.getReader(stopLibrary.getAbsolutePath(), "UTF-8");
+			FileDeEncrypt deEncrypt = new FileDeEncrypt("STP FILE DE-ENCRYPT");
+			br = deEncrypt.decryptFile(stopLibrary.getAbsolutePath());
+//			br = IOUtil.getReader(stopLibrary.getAbsolutePath(), "UTF-8");
 			String temp = null;
 			while ((temp = br.readLine()) != null) {
 				filters.add(temp);
@@ -143,7 +146,7 @@ public class AnsjElasticConfigurator {
 			e.printStackTrace();
 		}
 		filter = filters;
-		logger.info("ansj停止词典加载完毕!停用词词数: {}" ,count);
+		logger.info("ansj停止词典加载完毕!停用词词数: {}", count);
 	}
 
 	private static void emptyFilter() {

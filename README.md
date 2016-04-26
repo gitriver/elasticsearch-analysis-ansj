@@ -11,3 +11,5 @@ elasticsearch-analysis-ansj
 * 针对elastic search,lucene的版本进行调整，分别调整为2.1.0,5.3.1
 * 针对整个pom.xml进行重新编写
 * 增加library.properties、plugin-descriptor.properties配置
+
+* 对词典进行加密、解密

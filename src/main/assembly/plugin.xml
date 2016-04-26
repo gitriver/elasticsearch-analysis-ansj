@@ -12,6 +12,10 @@
             <directory>${project.basedir}/src/main/dic</directory>  
             <outputDirectory>/dic</outputDirectory>  
         </fileSet>
+        <fileSet>  
+            <directory>${project.basedir}/src/main/encrypt</directory>  
+            <outputDirectory>/encrypt</outputDirectory>  
+        </fileSet>
     </fileSets>
     <files>
         <file>
